@@ -1,4 +1,4 @@
-import {Container, Box, Image, Center, Text, Heading, Grid, GridItem, Spacer} from '@chakra-ui/react';
+import {Container, Box, Image, Center, Heading} from '@chakra-ui/react';
 import Head from 'next/head';
 
 const about = () => {

@@ -1,5 +1,5 @@
 import NextLink from 'next/link';
-import {Container, Box, Link, Stack, Heading, MenuItem, MenuList, MenuButton, IconButton, Flex ,useColorModeValue} from '@chakra-ui/react';
+import {Container, Box, Link, Stack, Heading, Flex ,useColorModeValue} from '@chakra-ui/react';
 import ThemeToggleButton from './theme-toggle-button';
 
 const LinkItem = ({ href, path, children}) => {

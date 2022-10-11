@@ -1,8 +1,6 @@
-import { Center, Heading, VStack, Link, Spacer, Divider } from '@chakra-ui/react'
+import { Center, Heading, Link, Spacer} from '@chakra-ui/react'
 import { Container, Box } from '@chakra-ui/react'
 import Head from 'next/head'
-import Image from 'next/image'
-import { Text } from '@chakra-ui/react'
 import { ArrowRightIcon } from '@chakra-ui/icons'
 
 const Page = () => {
