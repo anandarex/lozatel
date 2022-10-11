@@ -1,11 +1,11 @@
-import {Tabs, TabList, TabPanels, TabPanel, Tab, Text, 
+import {Tabs, TabList, TabPanels, TabPanel, Tab, 
     HStack, VStack, Box, StackDivider, Flex, Button, Select, 
-    Icon, Image, ButtonGroup, Stack, Spacer, Divider, Heading, Container } from "@chakra-ui/react";
+     ButtonGroup, Spacer, Divider, Heading, Container } from "@chakra-ui/react";
 import Head from "next/head";
-import data from "../../chart/data/data";
-import Treemap from "../../chart/trainingChart1/chartTraining";
+// import data from "../../chart/data/data";
+// import Treemap from "../../chart/trainingChart1/chartTraining";
 import TreemapCustomization from "../../chart/trainingChart1/chartD3Customization1";
-import goldenStateWariorsData from "../../chart/data/goldenStateWarriorsData";
+// import goldenStateWariorsData from "../../chart/data/goldenStateWarriorsData";
 import exportIndonesia from "../../chart/data/exportIndonesia";
 const DropDownMenu = props => {
     
