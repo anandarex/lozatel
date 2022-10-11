@@ -7,7 +7,7 @@ import Head from "next/head";
 import TreemapCustomization from "../../chart/trainingChart1/chartD3Customization1";
 // import goldenStateWariorsData from "../../chart/data/goldenStateWarriorsData";
 import exportIndonesia from "../../chart/data/exportIndonesia";
-const DropDownMenu = props => {
+const DropDownMenu = () => {
     
     return (
         <Container maxW='-moz-max-content'>
