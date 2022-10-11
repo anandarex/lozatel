@@ -18,6 +18,7 @@ const Page = () => {
           <Box borderRadius="lg" bg="cyan" p={1} mb={1} align="center" color="black" fontWeight='bold'>
               <text>Lozatel</text>
           </Box>
+          
      </Container>
   )
 }
