@@ -41,7 +41,7 @@ const Navbar = props => {
             >
                 <Flex align="center" mr={5}>
                     <Heading as="h1" size="lg" letterSpacing={'tighter'}>
-                        <text><Link href='/'>LOZATEL</Link> || YOUR UNCANNY ATLAS</text>
+                        <text><Link href='/'>LOZATEL</Link> || THE FRIENDLY ATLAS</text>
                     </Heading>
                 </Flex>
                 <Stack
