@@ -30,7 +30,7 @@ export default function Home() {
 
           <a href="/aboutus" className={styles.card}>
             <h2>About &rarr;</h2>
-            <p>Find About Us!</p>
+            <p>Find About Us</p>
           </a>
         </div>
       </main>
