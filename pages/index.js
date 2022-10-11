@@ -1,7 +1,8 @@
-import { Link } from '@chakra-ui/react'
+import { Center, Link, Spacer } from '@chakra-ui/react'
 import { Container, Box } from '@chakra-ui/react'
 import Head from 'next/head'
 import Image from 'next/image'
+import { Text } from '@chakra-ui/react'
 
 const Page = () => {
   return (
@@ -18,7 +19,7 @@ const Page = () => {
           <Box borderRadius="lg" bg="cyan" p={1} mb={1} align="center" color="black" fontWeight='bold'>
               <text>Lozatel</text>
           </Box>
-          
+          <Spacer/>
      </Container>
   )
 }

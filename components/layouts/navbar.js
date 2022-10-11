@@ -1,5 +1,6 @@
 import NextLink from 'next/link';
 import {Container, Box, Link, Stack, Heading, MenuItem, MenuList, MenuButton, IconButton, Flex ,useColorModeValue} from '@chakra-ui/react';
+import ThemeToggleButton from './theme-toggle-button';
 
 const LinkItem = ({ href, path, children}) => {
     const active = path === href
@@ -55,6 +56,7 @@ const Navbar = props => {
                 mt={{base:0, nmd:0}}
                 mr="12px"
                 >
+                    <ThemeToggleButton />
                     <LinkItem href='/about' path={path}>About</LinkItem>
                     <LinkItem href='/dashboard' path={path}>Dashboard</LinkItem>
                     <LinkItem href='/knowledged3' path={path}>What Is D3?</LinkItem>
