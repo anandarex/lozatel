@@ -3,7 +3,10 @@ import { Container, Box } from '@chakra-ui/react'
 import Head from 'next/head'
 import { ArrowRightIcon } from '@chakra-ui/icons'
 
-const Page = () => {
+// const {isOpen, onToggle } = () => useDisclosure()
+
+const Page = props => {
+  
   return (
      <Container maxW='-moz-fit-content'>
       <Head>
@@ -19,13 +22,24 @@ const Page = () => {
               <text>Lozatel</text>
           </Box>
           <Spacer/>
+          
           <Box mt='50px'>
             <Center>
             <Heading fontSize='xxx-large'>Welcome to <Link href='/about'>Lozatel</Link></Heading>
             </Center>
-            <Spacer mb='10px'/>
             <Center>
-            <Heading fontSize='xxx-large'>We Transform Export Raw Data Into a Beautiful Chart</Heading>
+            {/* <Button onClick={onToggle}><ArrowDownIcon w={10} h={10}/></Button> */}
+            </Center>
+            <Spacer mb='10px'/>
+            
+              <Box
+              p='50px'
+              mt='4'
+              rounded='md'
+              shadow='md'
+              >
+              <Center>
+            <Heading fontSize='xxx-large'>We Transform Raw Data Into a Beautiful Chart</Heading>
             </Center>
             <Spacer mb='10px'/>
             <Center>
@@ -39,7 +53,11 @@ const Page = () => {
             <Center>
               <Link _hover={{color:'cyan'}} href='/dashboard'><ArrowRightIcon w={8} h={8}/></Link>
             </Center>
+              </Box>
+      
           </Box>
+          
+          
      </Container>
   )
 }

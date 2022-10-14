@@ -7,6 +7,7 @@ import Head from "next/head";
 import TreemapCustomization from "../../chart/trainingChart1/chartD3Customization1";
 // import goldenStateWariorsData from "../../chart/data/goldenStateWarriorsData";
 import exportIndonesia from "../../chart/data/exportIndonesia";
+import Link from "next/link";
 const DropDownMenu = () => {
     
     return (
@@ -47,7 +48,7 @@ const DropDownMenu = () => {
                 >
                         <ButtonGroup spacing='20' variant='outline'>
                         <Button>Country</Button>
-                        <Button>Product</Button>
+                        <Button disabled>Product</Button>
                         </ButtonGroup>
                 </HStack>
                 <VStack
@@ -89,7 +90,7 @@ const DropDownMenu = () => {
                 mt={3}
                 >
                     <ButtonGroup isAttached>
-                    <Button size='sm' variant='outline'>Tree Map</Button>
+                    <Button size='sm' variant='outline' disabled>Tree Map</Button>
                     <Button size='sm' variant='outline'>Geo Map</Button>
                     <Button size='sm' variant='outline'>Overtime</Button>
                     <Button size='sm' variant='outline'>Global Share</Button>
@@ -102,7 +103,7 @@ const DropDownMenu = () => {
                 mt={3}
                 >
                     <ButtonGroup size='md' isAttached variant='outline' >
-                    <Button variant='outline'>By Product</Button>
+                    <Button variant='outline' disabled>By Product</Button>
                     <Button variant='outline'>By Partner</Button>
                     </ButtonGroup>
                 </HStack>
@@ -135,7 +136,7 @@ const DropDownMenu = () => {
                     <text>Product Class</text>
                     <ButtonGroup>
                         <Button>SITC rev.2 2000-2019</Button>
-                        <Button>HC rev.2 2000-2019</Button>
+                        <Button disabled>HC rev.2 2000-2019</Button>
                     </ButtonGroup>
                     <Divider />
                     <text>Trade Flow</text>
@@ -146,7 +147,7 @@ const DropDownMenu = () => {
                     <Divider />
                     <text>Detail Level</text>
                     <ButtonGroup>
-                        <Button>2 Digit</Button>
+                        <Button disabled>2 Digit</Button>
                         <Button>4 Digit</Button>
                         <Button>6 Digit</Button>
                     </ButtonGroup>
