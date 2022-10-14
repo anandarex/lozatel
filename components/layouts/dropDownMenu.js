@@ -7,7 +7,6 @@ import Head from "next/head";
 import TreemapCustomization from "../../chart/trainingChart1/chartD3Customization1";
 // import goldenStateWariorsData from "../../chart/data/goldenStateWarriorsData";
 import exportIndonesia from "../../chart/data/exportIndonesia";
-import Link from "next/link";
 const DropDownMenu = () => {
     
     return (

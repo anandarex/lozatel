@@ -5,7 +5,7 @@ import { ArrowRightIcon } from '@chakra-ui/icons'
 
 // const {isOpen, onToggle } = () => useDisclosure()
 
-const Page = props => {
+const Page = () => {
   
   return (
      <Container maxW='-moz-fit-content'>
