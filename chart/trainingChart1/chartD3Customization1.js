@@ -5,31 +5,38 @@ function Treemap({ width, height, data }){
     const ref = useRef();
 
     useEffect(() => {
-        const svg = d3.select(ref.current)
-            .attr("width", width)
+        const svg = d3.select(ref.current);
+        svg.attr("width", width)
             .attr("height", height)
-            .style("border", "1px solid cyan")
-    }, []);
+            .style("border", "1px solid rgba(34, 211, 238, 0.7)")
+            .style("border-radius", "12px")
+            .style("background", "#071827")
+            .style("box-shadow", "0 12px 30px rgba(0, 0, 0, 0.15)");
+    }, [width, height]);
 
     useEffect(() => {
         draw();
-    }, [data]);
+    }, [data, width, height]);
 
     const draw = () => {
       const svg = d3.select(ref.current);
+      svg.selectAll("*").remove();
+
+      if (!data || !data.children || data.children.length === 0) {
+        return;
+      }
 
       // Give the data to this cluster layout:
-      var root = d3.hierarchy(data).sum(function(d){ return d.value});
+      const root = d3.hierarchy(data).sum((d) => d.value || 0);
 
       // initialize treemap
       d3.treemap()
           .size([width, height])
-          .paddingTop(15)
-          .paddingRight(2)
-          .paddingLeft(2)
-          .paddingInner(3)
-          .paddingBottom(7)
-          (root);
+          .paddingTop(28)
+          .paddingRight(4)
+          .paddingLeft(4)
+          .paddingInner(4)
+          .paddingBottom(16)(root);
       
       const color = d3.scaleOrdinal()
           .domain(["Live Animals", "Vegetables", "Animal Fats", "Prepared Foodstuffs", "Mineral", "Chemical", 
@@ -45,106 +52,118 @@ function Treemap({ width, height, data }){
           .domain([10, 30])
           .range([.5,1]);
 
+      const formatValue = d3.format(",.2f");
+      const leaves = root.leaves();
 
-      // Select the nodes
-      var nodes = svg
-                  .selectAll("rect")
-                  .data(root.leaves())
+      svg.append("rect")
+        .attr("class", "background")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", "#071827");
 
+      svg.selectAll("rect.tile")
+          .data(leaves, (d) => d.data.name)
+          .join(
+            (enter) => {
+              const rect = enter.append("rect")
+                .attr("class", "tile")
+                .attr("x", (d) => d.x0)
+                .attr("y", (d) => d.y0)
+                .attr("width", (d) => d.x1 - d.x0)
+                .attr("height", (d) => d.y1 - d.y0)
+.style("stroke", "rgba(255,255,255,0.5)")
+                .style("stroke-width", "1.2")
+                .style("fill", (d) => color(d.parent.data.name))
+                .style("opacity", (d) => opacity(d.data.value));
 
-      //animate new additions
-      nodes
-            .transition().duration(300)
-                .attr('x', function (d) { return d.x0; })
-                .attr('y', function (d) { return d.y0; })
-                .attr('width', function (d) { return d.x1 - d.x0; })
-                .attr('height', function (d) { return d.y1 - d.y0; })
-                .style("opacity", function(d){ return opacity(d.data.value)})
-                .style("fill", function(d){ return color(d.parent.data.name)} )
+              rect.append("title")
+                .text((d) => `${d.parent.data.name}: ${formatValue(d.data.value)}`);
 
+              return rect;
+            },
+            (update) => update
+              .transition()
+              .duration(300)
+              .attr("x", (d) => d.x0)
+              .attr("y", (d) => d.y0)
+              .attr("width", (d) => d.x1 - d.x0)
+              .attr("height", (d) => d.y1 - d.y0)
+              .style("opacity", (d) => opacity(d.data.value))
+              .style("fill", (d) => color(d.parent.data.name)),
+            (exit) => exit.remove()
+          );
 
-      // draw rectangles
-      nodes.enter()
-          .append("rect")
-          .attr('x', function (d) { return d.x0; })
-          .attr('y', function (d) { return d.y0; })
-          .attr('width', function (d) { return d.x1 - d.x0; })
-          .attr('height', function (d) { return d.y1 - d.y0; })
-          .style("stroke", "black")
-          .style("fill", function(d){ return color(d.parent.data.name)} )
-          .style("opacity", function(d){ return opacity(d.data.value)})
+      svg.selectAll(".tile-label")
+          .data(leaves, (d) => d.data.name)
+          .join(
+            (enter) => enter.append("text")
+              .attr("class", "tile-label")
+              .attr("x", (d) => d.x0 + 6)
+              .attr("y", (d) => d.y0 + 15)
+              .style("font-size", (d) => (d.x1 - d.x0) > 120 && (d.y1 - d.y0) > 35 ? "12px" : "9px")
+              .style("font-weight", "600")
+              .style("fill", "white")
+              .style("pointer-events", "none")
+              .attr("dominant-baseline", "hanging")
+              .text((d) => {
+                const width = d.x1 - d.x0;
+                const height = d.y1 - d.y0;
+                if (width < 70 || height < 22) return "";
+                return d.data.name.replace('mister_',' ').slice(0, width > 120 ? 24 : 12);
+              }),
+            (update) => update
+              .attr("x", (d) => d.x0 + 6)
+              .attr("y", (d) => d.y0 + 15)
+              .style("font-size", (d) => (d.x1 - d.x0) > 120 && (d.y1 - d.y0) > 35 ? "12px" : "9px")
+              .text((d) => {
+                const width = d.x1 - d.x0;
+                const height = d.y1 - d.y0;
+                if (width < 70 || height < 22) return "";
+                return d.data.name.replace('mister_',' ').slice(0, width > 120 ? 24 : 12);
+              }),
+            (exit) => exit.remove()
+          );
 
-        //tambahan untuk simple tooltips
-          .append("title")
-          .text((d) => `${d.parent.data.name} in : ${d.value}` );
-        //end
+      svg.selectAll(".tile-value")
+          .data(leaves, (d) => d.data.name)
+          .join(
+            (enter) => enter.append("text")
+              .attr("class", "tile-value")
+              .attr("x", (d) => d.x0 + 6)
+              .attr("y", (d) => d.y0 + 32)
+              .style("font-size", (d) => (d.x1 - d.x0) > 100 && (d.y1 - d.y0) > 35 ? "11px" : "8px")
+              .style("fill", "rgba(255,255,255,0.95)")
+              .style("pointer-events", "none")
+              .attr("dominant-baseline", "hanging")
+              .text((d) => {
+                const width = d.x1 - d.x0;
+                const height = d.y1 - d.y0;
+                if (width < 90 || height < 28) return "";
+                return formatValue(d.data.value);
+              }),
+            (update) => update
+              .attr("x", (d) => d.x0 + 6)
+              .attr("y", (d) => d.y0 + 32)
+              .style("font-size", (d) => (d.x1 - d.x0) > 100 && (d.y1 - d.y0) > 35 ? "11px" : "8px")
+              .text((d) => {
+                const width = d.x1 - d.x0;
+                const height = d.y1 - d.y0;
+                if (width < 90 || height < 28) return "";
+                return formatValue(d.data.value);
+              }),
+            (exit) => exit.remove()
+          );
 
-      nodes.exit().remove()
- 
-      // select node titles
-      var nodeText = svg
-          .selectAll("text")
-          .data(root.leaves())
-
-      // add the text
-      nodeText.enter()
-          .append("text")
-          .attr("x", function(d){ return d.x0+1})    // +10 to adjust position (more right)
-          .attr("y", function(d){ return d.y0+15})    // +20 to adjust position (lower)
-          .text(function(d){ return d.data.name.replace('mister_',' ') })
-          .attr("font-size", "12px")
-          .attr("fill", "white")
-
-        //   nodeText.enter()
-        //   .append("text")
-        //   .attr("x", function(d){ return d.x0+350})    // +10 to adjust position (more right)
-        //   .attr("y", function(d){ return d.y0+100})    // +20 to adjust position (lower)
-        //   .text(function(d){ return d.data.name.replace('mister_',' ') })
-        //   .attr("font-size", "100px")
-        //   .attr("fill", "white")
-      
-      // select node titles
-      var nodeVals = svg
-          .selectAll("vals")
-          .data(root.leaves())  
-
-      // add the values
-      nodeVals.enter()
-          .append("text")
-          .attr("x", function(d){ return d.x0+5})    // +10 to adjust position (more right)
-          .attr("y", function(d){ return d.y0+40})    // +20 to adjust position (lower)
-          .text(function(d){ return d.data.value })
-          .attr("font-size", "12px")
-          .attr("fill", "white")
-    // nodeVals.enter()
-    //       .append("text")
-    //       .attr("x", function(d){ return d.x0+250})    // +10 to adjust position (more right)
-    //       .attr("y", function(d){ return d.y0+200})    // +20 to adjust position (lower)
-    //       .text(function(d){ return d.data.value })
-    //       .attr("font-size", "70px")
-    //       .attr("fill", "white")
-  
-      // add the parent node titles
-    //   svg
-    //   .selectAll("titles")
-    //   .data(root.descendants().filter(function(d){return d.depth==1}))
-    //   .enter()
-    //   .append("text")
-    //       .attr("x", function(d){ return d.x0})
-    //       .attr("y", function(d){ return d.y0+21})
-    //       .text(function(d){ return d.data.name })
-    //       .attr("font-size", "20px")
-    //       .attr("fill",  function(d){ return color(d.data.name)} )
-  
-      // Add the chart heading
-      svg
-      .append("text")
-          .attr("x", 350)
-          .attr("y", 20)    // +20 to adjust position (lower)
+      svg.append("text")
+          .attr("x", width / 2)
+          .attr("y", 22)
+          .attr("text-anchor", "middle")
           .text("Komoditi Ekspor Indonesia")
           .attr("font-size", "20px")
-          .attr("fill",  "white" )
-
+          .attr("font-weight", "700")
+          .attr("fill", "rgba(255,255,255,0.95)");
     }
 
     return (

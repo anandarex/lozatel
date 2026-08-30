@@ -1,21 +1,21 @@
-import NextLink from 'next/link';
-import {Container, Box, Link, Stack, Heading, Flex ,useColorModeValue} from '@chakra-ui/react';
+import {Container, Box, Stack, Heading, Flex ,useColorModeValue} from '@chakra-ui/react';
 import ThemeToggleButton from './theme-toggle-button';
 
 const LinkItem = ({ href, path, children}) => {
     const active = path === href
     const inactiveColor = useColorModeValue(`gray200`, `whiteAlpha.900`)
     return(
-        <NextLink href={href}>
-            <Link
+        <Box
+            as="a"
+            href={href}
             p={2}
             bg={active ? 'glassTeal' : undefined}
             color={active ? '#202023' : inactiveColor}
             _hover={{color:'cyan'}}
-            >
-                {children}
-            </Link>
-        </NextLink>
+            display="inline-block"
+        >
+            {children}
+        </Box>
     )
 }
 
@@ -42,7 +42,8 @@ const Navbar = props => {
             >
                 <Flex align="center" mr={5}>
                     <Heading as="h1" size="lg" letterSpacing={'tighter'}>
-                        <text><Link href='/'>LOZATEL</Link> || THE FRIENDLY ATLAS</text>
+                        <Box as="a" href='/' _hover={{ color: 'cyan' }} display="inline-block">LOZATEL</Box>
+                        {' || THE FRIENDLY ATLAS'}
                     </Heading>
                 </Flex>
                 <Stack

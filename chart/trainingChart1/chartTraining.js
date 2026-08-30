@@ -5,29 +5,33 @@ function Treemap({ width, height, data }){
     const ref = useRef();
 
     useEffect(() => {
-        const svg = d3.select(ref.current)
-            .attr("width", width)
+        const svg = d3.select(ref.current);
+        svg.attr("width", width)
             .attr("height", height)
-            .style("border", "1px solid cyan")
-    }, []);
+            .style("border", "1px solid cyan");
+    }, [width, height]);
 
     useEffect(() => {
         draw();
-    }, [data]);
+    }, [data, width, height]);
 
     const draw = () => {
       const svg = d3.select(ref.current);
+      svg.selectAll("*").remove();
+
+      if (!data || !data.children || data.children.length === 0) {
+        return;
+      }
 
       // Give the data to this cluster layout:
-      var root = d3.hierarchy(data).sum(function(d){ return d.value});
+      const root = d3.hierarchy(data).sum((d) => d.value || 0);
 
       // initialize treemap
       d3.treemap()
           .size([width, height])
           .paddingTop(28)
           .paddingRight(7)
-          .paddingInner(3)
-          (root);
+          .paddingInner(3)(root);
       
       const color = d3.scaleOrdinal()
           .domain(["Guards", "Forwards", "Centers", "Top"])
@@ -37,86 +41,88 @@ function Treemap({ width, height, data }){
           .domain([10, 30])
           .range([.5,1]);
 
+      const leaves = root.leaves();
 
-      // Select the nodes
-      var nodes = svg
-                  .selectAll("rect")
-                  .data(root.leaves())
+      svg.selectAll("rect")
+          .data(leaves, (d) => d.data.name)
+          .join(
+            (enter) => enter.append("rect")
+              .attr("x", (d) => d.x0)
+              .attr("y", (d) => d.y0)
+              .attr("width", (d) => d.x1 - d.x0)
+              .attr("height", (d) => d.y1 - d.y0)
+              .style("stroke", "black")
+              .style("fill", (d) => color(d.parent.data.name))
+              .style("opacity", (d) => opacity(d.data.value)),
+            (update) => update
+              .transition()
+              .duration(300)
+              .attr("x", (d) => d.x0)
+              .attr("y", (d) => d.y0)
+              .attr("width", (d) => d.x1 - d.x0)
+              .attr("height", (d) => d.y1 - d.y0)
+              .style("opacity", (d) => opacity(d.data.value))
+              .style("fill", (d) => color(d.parent.data.name)),
+            (exit) => exit.remove()
+          );
 
+      svg.selectAll(".label")
+          .data(leaves, (d) => d.data.name)
+          .join(
+            (enter) => enter.append("text")
+              .attr("class", "label")
+              .attr("x", (d) => d.x0 + 5)
+              .attr("y", (d) => d.y0 + 20)
+              .text((d) => d.data.name.replace('mister_',''))
+              .attr("font-size", "19px")
+              .attr("fill", "white"),
+            (update) => update
+              .attr("x", (d) => d.x0 + 5)
+              .attr("y", (d) => d.y0 + 20)
+              .text((d) => d.data.name.replace('mister_','')),
+            (exit) => exit.remove()
+          );
 
-      //animate new additions
-      nodes
-            .transition().duration(300)
-                .attr('x', function (d) { return d.x0; })
-                .attr('y', function (d) { return d.y0; })
-                .attr('width', function (d) { return d.x1 - d.x0; })
-                .attr('height', function (d) { return d.y1 - d.y0; })
-                .style("opacity", function(d){ return opacity(d.data.value)})
-                .style("fill", function(d){ return color(d.parent.data.name)} )
+      svg.selectAll(".value")
+          .data(leaves, (d) => d.data.name)
+          .join(
+            (enter) => enter.append("text")
+              .attr("class", "value")
+              .attr("x", (d) => d.x0 + 5)
+              .attr("y", (d) => d.y0 + 35)
+              .text((d) => d.data.value)
+              .attr("font-size", "11px")
+              .attr("fill", "white"),
+            (update) => update
+              .attr("x", (d) => d.x0 + 5)
+              .attr("y", (d) => d.y0 + 35)
+              .text((d) => d.data.value),
+            (exit) => exit.remove()
+          );
 
+      svg.selectAll(".parent-title")
+          .data(root.descendants().filter((d) => d.depth === 1), (d) => d.data.name)
+          .join(
+            (enter) => enter.append("text")
+              .attr("class", "parent-title")
+              .attr("x", (d) => d.x0)
+              .attr("y", (d) => d.y0 + 21)
+              .text((d) => d.data.name)
+              .attr("font-size", "19px")
+              .attr("fill", (d) => color(d.data.name)),
+            (update) => update
+              .attr("x", (d) => d.x0)
+              .attr("y", (d) => d.y0 + 21)
+              .text((d) => d.data.name),
+            (exit) => exit.remove()
+          );
 
-      // draw rectangles
-      nodes.enter()
-          .append("rect")
-          .attr('x', function (d) { return d.x0; })
-          .attr('y', function (d) { return d.y0; })
-          .attr('width', function (d) { return d.x1 - d.x0; })
-          .attr('height', function (d) { return d.y1 - d.y0; })
-          .style("stroke", "black")
-          .style("fill", function(d){ return color(d.parent.data.name)} )
-          .style("opacity", function(d){ return opacity(d.data.value)})
-
-      nodes.exit().remove()
-
-      // select node titles
-      var nodeText = svg
-          .selectAll("text")
-          .data(root.leaves())
-
-      // add the text
-      nodeText.enter()
-          .append("text")
-          .attr("x", function(d){ return d.x0+5})    // +10 to adjust position (more right)
-          .attr("y", function(d){ return d.y0+20})    // +20 to adjust position (lower)
-          .text(function(d){ return d.data.name.replace('mister_','') })
-          .attr("font-size", "19px")
-          .attr("fill", "white")
-      
-      // select node titles
-      var nodeVals = svg
-          .selectAll("vals")
-          .data(root.leaves())  
-
-      // add the values
-      nodeVals.enter()
-          .append("text")
-          .attr("x", function(d){ return d.x0+5})    // +10 to adjust position (more right)
-          .attr("y", function(d){ return d.y0+35})    // +20 to adjust position (lower)
-          .text(function(d){ return d.data.value })
-          .attr("font-size", "11px")
-          .attr("fill", "white")
-  
-      // add the parent node titles
-      svg
-      .selectAll("titles")
-      .data(root.descendants().filter(function(d){return d.depth==1}))
-      .enter()
-      .append("text")
-          .attr("x", function(d){ return d.x0})
-          .attr("y", function(d){ return d.y0+21})
-          .text(function(d){ return d.data.name })
-          .attr("font-size", "19px")
-          .attr("fill",  function(d){ return color(d.data.name)} )
-  
-      // Add the chart heading
-      svg
-      .append("text")
+      svg.append("text")
           .attr("x", 700)
-          .attr("y", 20)    // +20 to adjust position (lower)
+          .attr("y", 20)
           .text("Celtics")
           .attr("font-size", "20px")
-          .attr("fill",  "white" )
-
+          .attr("fill", "white");
     }
 
     return (

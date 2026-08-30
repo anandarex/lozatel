@@ -15,7 +15,7 @@ const knowledged3 = () => {
                 <title>What is D3?</title>
             </Head>
             <Box borderRadius="lg" bg="cyan" p={1} mb={1} align="center" color="black" fontWeight='bold'>
-                <text>What is D3</text>
+                What is D3
             </Box>
             <br/>
             <Center>

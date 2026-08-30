@@ -15,7 +15,7 @@ const about = () => {
                 <title>About Us</title>
             </Head>
             <Box borderRadius="lg" bg="cyan" p={1} mb={1} align="center" color="black" fontWeight='bold'>
-                <text>About Us</text>
+                About Us
             </Box>
             <br></br>
             <Center>

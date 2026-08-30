@@ -1,4 +1,4 @@
-import { Center, Heading, Link, Spacer} from '@chakra-ui/react'
+import { Center, Heading, Spacer} from '@chakra-ui/react'
 import { Container, Box } from '@chakra-ui/react'
 import Head from 'next/head'
 import { ArrowRightIcon } from '@chakra-ui/icons'
@@ -25,7 +25,7 @@ const Page = () => {
           
           <Box mt='50px'>
             <Center>
-            <Heading fontSize='xxx-large'>Welcome to <Link href='/about'>Lozatel</Link></Heading>
+            <Heading fontSize='xxx-large'>Welcome to <Box as='a' href='/about'>Lozatel</Box></Heading>
             </Center>
             <Center>
             {/* <Button onClick={onToggle}><ArrowDownIcon w={10} h={10}/></Button> */}
@@ -51,7 +51,7 @@ const Page = () => {
             </Center>
             <Spacer mb='10px'/>
             <Center>
-              <Link _hover={{color:'cyan'}} href='/dashboard'><ArrowRightIcon w={8} h={8}/></Link>
+              <Box as='a' href='/dashboard' _hover={{color:'cyan'}} display='inline-block'><ArrowRightIcon w={8} h={8}/></Box>
             </Center>
               </Box>
       

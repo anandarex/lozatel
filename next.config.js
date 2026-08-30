@@ -1,3 +1,4 @@
 module.exports = {
-    reactStrictMode: true
+    reactStrictMode: true,
+    allowedDevOrigins: ['172.24.224.1']
 }

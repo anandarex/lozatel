@@ -16,7 +16,7 @@ const dashboard = () => {
                 <link rel="icon" href='favicon.ico' />
             </Head>
             <Box borderRadius="lg" bg="cyan" p={1} mb={1} align="center" color="black" fontWeight='bold'>
-                <text>Dashboard</text>
+                Dashboard
             </Box>
             <Box>
                 <DropDownMenu />
