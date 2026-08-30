@@ -4,15 +4,12 @@ import {
     TabPanels,
     TabPanel,
     Tab,
-    HStack,
     VStack,
     Box,
-    StackDivider,
     Flex,
     Button,
     Select,
     ButtonGroup,
-    Spacer,
     Divider,
     Heading,
     Container,
@@ -26,6 +23,7 @@ import {
     StatHelpText,
 } from "@chakra-ui/react";
 import Head from "next/head";
+import { useState, useMemo } from "react";
 import TreemapCustomization from "../../chart/trainingChart1/chartD3Customization1";
 import exportIndonesia from "../../chart/data/exportIndonesia";
 
@@ -74,8 +72,57 @@ const calculateStats = (data) => {
     };
 };
 
+const getProductData = (productName) => {
+    if (!productName || productName === "Select a product") {
+        return exportIndonesia;
+    }
+    
+    const product = exportIndonesia.children?.find(
+        (child) => child.name.toLowerCase() === productName.toLowerCase()
+    );
+    
+    if (product) {
+        return {
+            name: product.name,
+            children: product.children || [{ name: product.name, value: 0 }],
+        };
+    }
+    
+    return exportIndonesia;
+};
+
+const getProductValue = (productName) => {
+    if (!productName || productName === "Select a product") return 0;
+    
+    const product = exportIndonesia.children?.find(
+        (child) => child.name.toLowerCase() === productName.toLowerCase()
+    );
+    
+    return product?.children?.[0]?.value || 0;
+};
+
 const DropDownMenu = () => {
+    const [selectedProduct, setSelectedProduct] = useState("");
     const stats = calculateStats(exportIndonesia);
+    
+    const filteredData = useMemo(
+        () => getProductData(selectedProduct),
+        [selectedProduct]
+    );
+    
+    const productValue = useMemo(
+        () => getProductValue(selectedProduct),
+        [selectedProduct]
+    );
+    
+    const displayStats = selectedProduct && selectedProduct !== "Select a product" 
+        ? {
+            total: `$${(productValue / 1e9).toFixed(2)}B`,
+            topCategory: `$${(productValue / 1e9).toFixed(2)}B`,
+            categories: 1,
+          }
+        : stats;
+    
     
     return (
         <Container maxW="1400px" py={8} px={{ base: 4, md: 6 }}>
@@ -87,12 +134,18 @@ const DropDownMenu = () => {
                     <Badge colorScheme="cyan" variant="subtle" mb={3} fontSize="sm" px={3} py={1}>
                         Trade Analytics
                     </Badge>
-                    <Heading as="h1" size="2xl" color="white" mb={2}>
-                        Indonesia Export Dashboard
-                    </Heading>
-                    <Text color="gray.400" fontSize="md">
-                        2021 Export Data by Product Category
-                    </Text>
+                    <Flex justify="space-between" align="flex-start" gap={4} wrap="wrap">
+                        <Box>
+                            <Heading as="h1" size="2xl" color="white" mb={2}>
+                                Indonesia Export Dashboard
+                            </Heading>
+                            <Text color="gray.400" fontSize="md">
+                                {selectedProduct && selectedProduct !== "Select a product"
+                                    ? `Product: ${selectedProduct}`
+                                    : "2021 Export Data by Product Category"}
+                            </Text>
+                        </Box>
+                    </Flex>
                 </Box>
 
                 {/* KPI Summary Row */}
@@ -103,26 +156,26 @@ const DropDownMenu = () => {
                 >
                     <GridItem>
                         <KPIStat
-                            icon="📊"
-                            label="Total Exports"
-                            value={stats.total}
-                            helpText="All products combined"
+                            icon={selectedProduct && selectedProduct !== "Select a product" ? "📦" : "📊"}
+                            label={selectedProduct && selectedProduct !== "Select a product" ? "Product Value" : "Total Exports"}
+                            value={displayStats.total}
+                            helpText={selectedProduct && selectedProduct !== "Select a product" ? `${selectedProduct} export value` : "All products combined"}
                         />
                     </GridItem>
                     <GridItem>
                         <KPIStat
                             icon="⭐"
-                            label="Top Category"
-                            value={stats.topCategory}
-                            helpText="Highest single category"
+                            label={selectedProduct && selectedProduct !== "Select a product" ? "Export Value" : "Top Category"}
+                            value={displayStats.topCategory}
+                            helpText={selectedProduct && selectedProduct !== "Select a product" ? `${selectedProduct} total` : "Highest single category"}
                         />
                     </GridItem>
                     <GridItem>
                         <KPIStat
                             icon="📦"
-                            label="Categories"
-                            value={stats.categories}
-                            helpText="Product categories tracked"
+                            label={selectedProduct && selectedProduct !== "Select a product" ? "Product" : "Categories"}
+                            value={selectedProduct && selectedProduct !== "Select a product" ? displayStats.categories : stats.categories}
+                            helpText={selectedProduct && selectedProduct !== "Select a product" ? "Single product selected" : "Product categories tracked"}
                         />
                     </GridItem>
                 </Grid>
@@ -143,7 +196,7 @@ const DropDownMenu = () => {
                     backdropFilter="blur(20px)"
                 >
                     <Box overflow="hidden" borderRadius="16px" bg="gray.900">
-                        <TreemapCustomization width={940} height={580} data={exportIndonesia} />
+                        <TreemapCustomization width={940} height={580} data={filteredData} />
                     </Box>
                 </Box>
 
@@ -265,19 +318,16 @@ const DropDownMenu = () => {
                                             borderColor="gray.600"
                                             color="white"
                                             placeholder="Select a product"
+                                            value={selectedProduct}
+                                            onChange={(e) => setSelectedProduct(e.target.value)}
                                             _hover={{ borderColor: "cyan.400" }}
                                             fontSize="sm"
                                         >
-                                            <option value='textiles'>Textiles</option>
-                                            <option value='agriculture'>Agriculture</option>
-                                            <option value='stone'>Stone</option>
-                                            <option value='minerals'>Minerals</option>
-                                            <option value='metals'>Metals</option>
-                                            <option value='chemicals'>Chemicals</option>
-                                            <option value='vehicles'>Vehicles</option>
-                                            <option value='electronics'>Electronics</option>
-                                            <option value='other'>Other</option>
-                                            <option value='services'>Services</option>
+                                            {exportIndonesia.children?.map((product) => (
+                                                <option key={product.name} value={product.name}>
+                                                    {product.name}
+                                                </option>
+                                            ))}
                                         </Select>
                                     </Box>
                                 </VStack>
